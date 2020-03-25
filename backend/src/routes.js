@@ -4,11 +4,14 @@ import express from "express";
 import OngController from "./app/controllers/OngController";
 import IncidentController from "./app/controllers/IncidentController";
 import ProfileController from "./app/controllers/ProfileController";
+import SessionController from "./app/controllers/SessionController";
 //Validator
 import { OngStore } from "./app/validators/Ong";
 import { IncidentStore } from "./app/validators/Incident";
 
 const routes = express.Router();
+
+routes.post("/session", SessionController.store);
 
 routes.get("/ongs", OngController.index);
 routes.post("/ongs", OngStore, OngController.store);
