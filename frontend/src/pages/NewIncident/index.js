@@ -1,12 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Container, Content, Form } from "./styles";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
+import api from "../../services/api";
 
 import logo from "../../assets/logo.svg";
+import { toast } from "react-toastify";
 
 export default function NewIncident() {
+  const navigate = useNavigate();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [value, setValue] = useState(null);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const ongId = localStorage.getItem("@HERO:ongId");
+    try {
+      await api.post(
+        "/incidents",
+        {
+          title,
+          description,
+          value
+        },
+        {
+          headers: {
+            Authorization: ongId
+          }
+        }
+      );
+
+      navigate("/profile");
+      toast.success("Caso criado com sucesso!");
+    } catch (err) {
+      toast.error("Verifique os dados!");
+    }
+  }
+
   return (
     <Container>
       <Content>
@@ -22,10 +54,27 @@ export default function NewIncident() {
             Voltar para home
           </Link>
         </section>
-        <Form>
-          <input required type="text" placeholder="Titulo do caso" />;
-          <textarea placeholder="Descrição" />
-          <input required type="text" placeholder="Valor em reais" />
+        <Form onSubmit={handleSubmit}>
+          <input
+            required
+            type="text"
+            placeholder="Titulo do caso"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+          />
+          ;
+          <textarea
+            placeholder="Descrição"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+          />
+          <input
+            required
+            type="number"
+            placeholder="Valor em reais"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+          />
           <button className="button" type="submit">
             CADASTRAR
           </button>
